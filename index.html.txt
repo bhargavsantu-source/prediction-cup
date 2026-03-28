@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BackStreet Prediction Cup 2026</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root { --ipl-blue: #192c70; --ipl-gold: #efb819; --accent: #d71920; }
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #f4f7f9; }
+        
+        .hero { 
+            height: 350px; 
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), 
+            url('https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?q=80&w=2000');
+            background-size: cover; background-position: center;
+            display: flex; align-items: center; justify-content: center;
+            color: white; border-bottom: 6px solid var(--ipl-gold);
+        }
+        .hero h1 { font-size: 3.5rem; text-transform: uppercase; font-weight: 900; text-shadow: 3px 3px 10px rgba(0,0,0,1); }
+
+        .container { max-width: 1100px; margin: -40px auto 50px; padding: 0 20px; }
+        .card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.12); margin-bottom: 25px; }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th { background: var(--ipl-blue); color: white; padding: 12px; text-align: left; }
+        td { padding: 12px; border-bottom: 1px solid #eee; }
+        
+        .badge { padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; }
+        .plus { background: #e6ffed; color: #22863a; }
+        .minus { background: #ffeef0; color: #d73a49; }
+
+        .match-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .match-item { padding: 10px; border-left: 4px solid var(--ipl-blue); background: #f9f9f9; font-size: 14px; }
+    </style>
+</head>
+<body>
+
+<div class="hero">
+    <h1>BackStreet Prediction Cup</h1>
+</div>
+
+<div class="container">
+    <div class="card">
+        <h3>🏆 Leaderboard (Round 1)</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Member</th>
+                    <th>Points</th>
+                    <th>Wallet Balance</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody id="leaderboard">
+                </tbody>
+        </table>
+    </div>
+
+    <div class="card">
+        <h3>📈 Performance Trend</h3>
+        <canvas id="moneyChart" style="height:300px;"></canvas>
+    </div>
+
+    <div class="card">
+        <h3>📅 Round 1 Schedule (₹50/match)</h3>
+        <div class="match-grid" id="schedule">
+            </div>
+    </div>
+</div>
+
+<script>
+    // --- ADMIN: UPDATE DATA HERE ---
+    const members = ["Arjun", "Deepak", "Ishaan", "Kabir", "Meera", "Rohan", "Sana"];
+    const matchSchedule = [
+        { id: 1, teams: "RCB vs SRH", date: "Mar 28", winner: "TBD" },
+        { id: 2, teams: "MI vs KKR", date: "Mar 29", winner: "TBD" },
+        { id: 3, teams: "RR vs CSK", date: "Mar 30", winner: "TBD" },
+        { id: 4, teams: "PBKS vs GT", date: "Mar 31", winner: "TBD" },
+        { id: 5, teams: "LSG vs DC", date: "Apr 01", winner: "TBD" },
+        { id: 6, teams: "KKR vs SRH", date: "Apr 02", winner: "TBD" },
+        { id: 7, teams: "CSK vs PBKS", date: "Apr 03", winner: "TBD" },
+        { id: 8, teams: "DC vs MI", date: "Apr 04", winner: "TBD" },
+        { id: 9, teams: "GT vs RR", date: "Apr 04", winner: "TBD" },
+        { id: 10, teams: "SRH vs LSG", date: "Apr 05", winner: "TBD" }
+    ];
+
+    // Mock balances for initial view
+    const balances = [150, -100, 50, -250, 400, 0, -50]; 
+
+    // Inject Leaderboard
+    const lb = document.getElementById('leaderboard');
+    members.forEach((m, i) => {
+        const bal = balances[i];
+        const status = bal >= 0 ? "SURPLUS" : "DEFICIT";
+        lb.innerHTML += `<tr>
+            <td><strong>${m}</strong></td>
+            <td>${Math.floor(Math.random()*5)}</td>
+            <td>₹${bal}</td>
+            <td><span class="badge ${bal >= 0 ? 'plus' : 'minus'}">${status}</span></td>
+        </tr>`;
+    });
+
+    // Inject Schedule
+    const sched = document.getElementById('schedule');
+    matchSchedule.forEach(m => {
+        sched.innerHTML += `<div class="match-item">
+            <strong>M${m.id}:</strong> ${m.teams} <br>
+            <small>${m.date} | Result: ${m.winner}</small>
+        </div>`;
+    });
+
+    // Chart.js Setup
+    const ctx = document.getElementById('moneyChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['Start', 'M1', 'M2', 'M3', 'M4'],
+            datasets: members.map((m, i) => ({
+                label: m,
+                data: [0, balances[i]/4, balances[i]/2, balances[i]/1.5, balances[i]],
+                borderColor: `hsl(${i * 50}, 70%, 50%)`,
+                tension: 0.3
+            }))
+        },
+        options: { responsive: true, maintainAspectRatio: false }
+    });
+</script>
+
+</body>
+</html>
